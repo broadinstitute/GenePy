@@ -27,7 +27,7 @@ setup(
         'pyBigWig',
         'pybedtools',
         'taigapy',
-        'PIL',
+        'Pillow',
         'gseapy',
         'bokeh',
         'igv'],  # external packages as dependencies
