@@ -41,7 +41,7 @@ def createManySubmissions(workspace, workflow, references, entity=None, expressi
   return submission_ids
 
 
-async def waitForSubmission(workspace, submissions, raise_errors=True):
+def waitForSubmission(workspace, submissions, raise_errors=True):
   """
   wrapper to create many submissions for a workflow
 
@@ -556,7 +556,7 @@ def renametsvs(workspace, wmto=None, index_func=None):
         wmto.update_sample_set(i, val.samples)
 
 
-async def findBackErasedDuplicaBamteFromTerraBucket(workspace, gsfolder, bamcol="WES_bam", baicol="WES_bai"):
+def findBackErasedDuplicaBamteFromTerraBucket(workspace, gsfolder, bamcol="WES_bam", baicol="WES_bai"):
   """
   If you have erased bam files in gcp with bai files still present and the bam files are stored elsewhere
   and their location is in a terra workspace.
@@ -614,7 +614,7 @@ async def findBackErasedDuplicaBamteFromTerraBucket(workspace, gsfolder, bamcol=
       print("no data for " + str(k))
 
 
-async def shareTerraBams(users, workspace, samples, bamcols=["internal_bam_filepath", "internal_bai_filepath"]):
+def shareTerraBams(users, workspace, samples, bamcols=["internal_bam_filepath", "internal_bai_filepath"]):
   """
   will share some files from gcp with a set of users using terra as metadata repo.
 
@@ -652,7 +652,7 @@ async def shareTerraBams(users, workspace, samples, bamcols=["internal_bam_filep
   return togiveaccess
 
 
-async def shareCCLEbams(users, samples, groups=[], raise_error=True, arg_max_length=100000, bamcols=["internal_bam_filepath", "internal_bai_filepath"],
+def shareCCLEbams(users, samples, groups=[], raise_error=True, arg_max_length=100000, bamcols=["internal_bam_filepath", "internal_bai_filepath"],
                   refsheet_url="https://docs.google.com/spreadsheets/d/1XkZypRuOEXzNLxVk9EOHeWRE98Z8_DBvL4PovyM01FE",
                   privacy_sheeturl="https://docs.google.com/spreadsheets/d/115TUgA1t_mD32SnWAGpW9OKmJ2W5WYAOs3SuSdedpX4"):
   """
@@ -682,7 +682,7 @@ async def shareCCLEbams(users, samples, groups=[], raise_error=True, arg_max_len
   blacklisted = set(blacklist) & set(samples)
   print("we have " + str(len(blacklist)) + ' blacklisted files')
   if len(blacklisted):
-    print("these lines are blacklisted " + str(blacklisted))
+    print("these lines are blacklisted " + blacklisted)
     if raise_error:
       raise ValueError("blacklistedlines")
   if type(users) is str:
@@ -741,7 +741,7 @@ def saveConfigs(workspace, filepath):
   h.dictToFile(params, filepath + '.json')
 
 
-async def cleanWorkspace(workspaceid, only=[], toleave=[], defaulttoleave=['workspace', 'scripts',
+def cleanWorkspace(workspaceid, only=[], toleave=[], defaulttoleave=['workspace', 'scripts',
                                                                      'notebooks', 'files', 'data', 'hound', 'references', 'name', 'folder']):
   """
   removes all processing folder in a terra workspace easily
@@ -880,7 +880,7 @@ def removeFromFailedWorkflows(workspaceid, maxtime = '2020-06-10', everythingFor
                     delete_job(workspaceid,val.submission_id,a,dryrun=dryrun)
 
 
-async def deleteHeavyFiles(workspaceid, unusedOnly=True):
+def deleteHeavyFiles(workspaceid, unusedOnly=True):
     """
     deletes all files above a certain size in a workspace (that are used or unused)
 

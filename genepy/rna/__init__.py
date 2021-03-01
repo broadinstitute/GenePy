@@ -97,7 +97,7 @@ def convertGenes(listofgenes, from_idtype="ensembl_gene_id", to_idtype="symbol")
     return(renamed, not_parsed)
 
 
-async def getSpikeInControlScales(refgenome, fastq=None, fastQfolder='', mapper='bwa', pairedEnd=False, cores=1,
+def getSpikeInControlScales(refgenome, fastq=None, fastQfolder='', mapper='bwa', pairedEnd=False, cores=1,
                             pathtosam='samtools', pathtotrim_galore='trim_galore', pathtobwa='bwa',
                             totrim=True, tomap=True, tofilter=True, results='res/', toremove=False):
     """
@@ -210,7 +210,7 @@ async def getSpikeInControlScales(refgenome, fastq=None, fastQfolder='', mapper=
     return norm, mapped,  # unique_mapped
 
 
-async def GSEAonExperiments(data, experiments, res={}, savename='', scaling=[], geneset='GO_Biological_Process_2015',
+def GSEAonExperiments(data, experiments, res={}, savename='', scaling=[], geneset='GO_Biological_Process_2015',
                       cores=8, cleanfunc=lambda i: i.split('(GO')[0]):
     """
 
@@ -553,7 +553,7 @@ def DESeqSamples(data, experiments, scaling=None, keep=True, rescaling=None, res
     return results
 
 
-async def gsva(data, geneset_file, pathtogenepy, method='ssgsea'):
+def gsva(data, geneset_file, pathtogenepy, method='ssgsea'):
   print('you need to have R installed with GSVA and GSEABase library installed')
   data.to_csv('/tmp/data_genepyhelper_gsva.csv')
   cmd = "Rscript "+pathtogenepy + \

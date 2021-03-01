@@ -9,8 +9,7 @@ import re
 
 import pandas as pd
 import numpy as np
-from genepy.utils import helper as h
-from genepy.google import gcp
+
 from taigapy import TaigaClient
 tc = TaigaClient()
 
@@ -49,7 +48,7 @@ def fromGTF2BED(gtfname, bedname, gtftype='geneAnnot'):
         prevname = ''
         newbed = {'chr': [], 'start': [], 'end': [], 'gene': []}
         for i, val in gtf.iterrows():
-            h.showcount(i, len(gtf))
+            showcount(i, len(gtf))
             if val['name'] == prevname:
                 newbed['end'][-1] = val['stop']
             else:
@@ -108,7 +107,7 @@ def getBamDate(bams, split='-', order="des", unknown='U'):
     return DTs
 
 
-async def indexBams(bucketpath, cores=4):
+def indexBams(bucketpath, cores=4):
     """
     given a bucket path, will index all .bam files without an associated index and return their paths
     """
@@ -192,6 +191,7 @@ def findReplicatesBams(folder, sep='-', namings='-r([0-9])', namepos=2):
 		if val[-4:] == '.bam':
 			match = re.search(namings, val)
 			if match:
+				number = match.groups()[0]
 				name = val.split(sep)[namepos]
 				if name in rep:
 					rep[name].append(val)
@@ -226,7 +226,7 @@ def pairedEnd(pairedend, folder="", numthreads=8, peaksFolder="peaks/",
 	# run the paired end pipeline
 	"""
 	print("you need to have bowtie2 installed: http://bowtie-bio.sourceforge.net/bowtie2/index.shtml")
-	for _, val in pairedend.items():
+	for key, val in pairedend.items():
 		out1 = folder + mappedFolder + val[0].split('.')[0] + ".mapped.sam"
 		in1 = folder + val[0]
 		in2 = folder + val[1]
@@ -241,11 +241,10 @@ def pairedEnd(pairedend, folder="", numthreads=8, peaksFolder="peaks/",
 		# it can take many TB so better delete
 
 
-async def mergeBams(rep):
+def mergeBams(rep):
 	"""
 	uses samtools to merge a set of replicates considered into one file
 	"""
-	in1 =''
 	for i, val in rep.items():
 		out1 = i + '.merged.bam'
 		for bam in val:

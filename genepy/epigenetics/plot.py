@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from matplotlib import cm
 from genepy.epigenetics import chipseq as chip
 
 def plotAverageOfSamples(samples, folder="", showAll=False, maxv=None, minv=None):
@@ -33,7 +32,7 @@ def pysam_getPeaksAt(peaks, bams, folder='data/seqs/', window=1000, numpeaks=100
 	peaks = peaks.sort_values(by="foldchange", ascending=False).iloc[:numpeaks]
 	peaks.chrom = peaks.chrom.astype(str)
 	for val in bams:
-		loaded.update({val: pysam.AlignmentFile(
+	loaded.update({val: pysam.AlignmentFile(
             folder + val, 'rb', threads=numthreads)})
 	for k, bam in loaded.items():
 		for num, (i, val) in enumerate(peaks.iterrows()):
@@ -210,10 +209,10 @@ def getPeaksAt(peaks, bigwigs, folder='', bigwignames=[], peaknames=[], window=1
 		print(data)
 	else:
 		if 'relative_summit_pos' in peaks.columns:
-			center = [int((val['start'] + val['relative_summit_pos']))
+		center = [int((val['start'] + val['relative_summit_pos']))
                     for k, val in peaks.iterrows()]
 		else:
-			center = [int((val['start'] + val['end']) / 2)
+		center = [int((val['start'] + val['end']) / 2)
                     for k, val in peaks.iterrows()]
 		pd.set_option('mode.chained_assignment', None)
 		peaks['start'] = [c - window for c in center]
@@ -239,9 +238,9 @@ def getPeaksAt(peaks, bigwigs, folder='', bigwignames=[], peaknames=[], window=1
 			cov[bigwig] = co
 			maxs.append(co.max())
 		for num, bigwig in enumerate(bigwigs):
-			sns.heatmap(cov[bigwig] * scale, ax=ax[num], vmax=max(maxs), yticklabels=[], cmap=cmaps[num],
+		sns.heatmap(cov[bigwig] * scale, ax=ax[num], vmax=max(maxs), yticklabels=[], cmap=cmaps[num],
                     cbar=True)
-			ax[num].set_title(bigwig.split('.')[0])
+		ax[num].set_title(bigwig.split('.')[0])
 		fig.subplots_adjust(wspace=0.1)
 		fig.show()
 		fig.savefig(name)
@@ -249,37 +248,37 @@ def getPeaksAt(peaks, bigwigs, folder='', bigwignames=[], peaknames=[], window=1
 
 
 def andrew(groups, merged, annot, enr=None, pvals=None, cols=8, precise=True, title = "sorted clustermap of cobindings clustered", folder="", rangeval=4, okpval=10**-3, size=(20,15),vmax=3, vmin=0):
-	if enr is None or pvals is None:
-		enr, pvals = chip.enrichment(merged, groups=groups)
-	rand = np.random.choice(merged.index,5000)
-	subgroups = groups[rand]
-	sorting = np.argsort(subgroups)
-	redblue = cm.get_cmap('RdBu_r',256)
-	subenr = enr.iloc[annot-cols:]
-	subenr[subenr>rangeval]=rangeval
-	subenr[subenr<-rangeval]=-rangeval
-	subenr = subenr/rangeval
-	data = []
-	#colors = []
-	impv = pvals.values
-	for i in subgroups[sorting]:
-		#colors.append(viridis(i))
-		a = redblue((128+(subenr[i]*128)).astype(int)).tolist()
-		for j in range(len(a)):
-			a[j] = [1.,1.,1.,1.] if impv[j,i] > okpval else a[j]
-		data.append(a)
-	data = pd.DataFrame(data=data,columns=list(subenr.index),index= rand[sorting])
-	#data["clusters"]  = colors
-	
-	a = np.log2(1.01+merged[merged.columns[cols:annot]].iloc[rand].iloc[sorting].T)
-	if not precise:
-		for i in set(groups):
-			e = a[a.columns[subgroups[sorting]==i]].mean(1)
-			e = pd.DataFrame([e for i in range((subgroups[sorting]==i).sum())]).T
-			a[a.columns[subgroups[sorting]==i]] = e
-	
-	fig = sns.clustermap(a, vmin=vmin, vmax=vmax, figsize=size, z_score=0, colors_ratio=0.01, col_cluster=False,col_colors=data, xticklabels=False)
-	fig.ax_col_dendrogram.set_visible(False)
-	fig.fig.suptitle(title)
-	fig.savefig(folder + str(len(set(groups))) + '_clustermap_cobinding_enrichment_andrewplot.pdf')
-	plt.show()
+    if enr is None or pvals is None:
+        enr, pvals = chip.enrichment(merged, groups=groups)
+    rand = np.random.choice(merged.index,5000)
+    subgroups = groups[rand]
+    sorting = np.argsort(subgroups)
+    redblue = cm.get_cmap('RdBu_r',256)
+    subenr = enr.iloc[annot-cols:]
+    subenr[subenr>rangeval]=rangeval
+    subenr[subenr<-rangeval]=-rangeval
+    subenr = subenr/rangeval
+    data = []
+    #colors = []
+    impv = pvals.values
+    for i in subgroups[sorting]:
+        #colors.append(viridis(i))
+        a = redblue((128+(subenr[i]*128)).astype(int)).tolist()
+        for j in range(len(a)):
+            a[j] = [1.,1.,1.,1.] if impv[j,i] > okpval else a[j]
+        data.append(a)
+    data = pd.DataFrame(data=data,columns=list(subenr.index),index= rand[sorting])
+    #data["clusters"]  = colors
+    
+    a = np.log2(1.01+merged[merged.columns[cols:annot]].iloc[rand].iloc[sorting].T)
+    if not precise:
+        for i in set(groups):
+            e = a[a.columns[subgroups[sorting]==i]].mean(1)
+            e = pd.DataFrame([e for i in range((subgroups[sorting]==i).sum())]).T
+            a[a.columns[subgroups[sorting]==i]] = e
+    
+    fig = sns.clustermap(a, vmin=vmin, vmax=vmax, figsize=size, z_score=0, colors_ratio=0.01, col_cluster=False,col_colors=data, xticklabels=False)
+    fig.ax_col_dendrogram.set_visible(False)
+    fig.fig.suptitle(title)
+    fig.savefig(folder + str(len(set(groups))) + '_clustermap_cobinding_enrichment_andrewplot.pdf')
+    plt.show()
