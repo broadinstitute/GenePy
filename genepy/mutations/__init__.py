@@ -277,7 +277,7 @@ def manageGapsInSegments(segtocp, Chromosome='Chromosome', End="End", Start="Sta
         # the rest to the other
         l.append([val[Chromosome], val[Start] - int(sizeofgap / 2), val[End]])
       elif val[Start] < prevend:  # this should never happen
-        # import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
         raise ValueError("start comes after end")
       else:
         l.append([val[Chromosome], val[Start], val[End]])
@@ -290,7 +290,9 @@ def manageGapsInSegments(segtocp, Chromosome='Chromosome', End="End", Start="Sta
   return segments.reset_index(drop=True)
 
 
-def toGeneMatrix(segments, gene_mapping, style='weighted', missingchrom=['Y'], gene_names_col='gene_name'):
+def toGeneMatrix(segments, gene_mapping, style='weighted',
+                 missingchrom=['Y'], gene_names_col='gene_name',
+                 drop_na_ids=True):
   """
   makes a geneXsample matrix from segment level copy number (works with multiple sample file)
 
@@ -300,7 +302,7 @@ def toGeneMatrix(segments, gene_mapping, style='weighted', missingchrom=['Y'], g
     segments: dataframe of segments containing: [Chromosome, Segment_Mean, Chromosome, start, end] columns
     gene_mapping: dataframe with symbol, ensembl_id columns for each gene
     missingchrom: list[str] chromosomes not to look into
-
+    drop_na_ids: bool -- drop genes for which there's no Entrez IDs
   Returns:
   -------
     pd.dataframe: the matrix
@@ -358,7 +360,11 @@ def toGeneMatrix(segments, gene_mapping, style='weighted', missingchrom=['Y'], g
             end = segs[j][2]
             coef = ncoef
           data[i, k] = val if style == "weighted" else val / c
-  return pd.DataFrame(data=data, index=samples, columns=gene_mapping[gene_names_col])
+  data = pd.DataFrame(data=data, index=samples, columns=gene_mapping[gene_names_col])
+  if drop_na_ids:
+    cols = gene_mapping.dropna(subset=['entrezgene_id'])[gene_names_col]
+    data = data[cols]
+  return data
 
 
 def checkAmountOfSegments(segmentcn, thresh=850, samplecol="DepMap_ID"):
