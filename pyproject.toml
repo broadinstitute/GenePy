@@ -1,16 +1,14 @@
 [tool.poetry]
-name = "genepy"
+name = "cds-genepy"
 version = "0.1.0"
 description = "depmap-omics dependencies"
 authors = ["CDS-omics"]
 readme = "README.md"
-packages = [
-    # { include = "genepy" },
-    { include = "dalmatian"}
-]
+packages = [{ include = "genepy" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
+cds-dalmatian = { git = "https://github.com/qinqian/cds-dalmatian", branch = "dev" }
 bokeh = "2.4.2"
 colorcet = "^3.0.1"
 gsheets = "^0.6.1"
@@ -27,7 +25,7 @@ xmltodict = "^0.13.0"
 biomart = "^0.9.2"
 firecloud = "^0.16.35"
 iso8601 = "^1.1.0"
-agutil = "^5.0.1"
+agutil = "^4.0.2"
 hound = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
